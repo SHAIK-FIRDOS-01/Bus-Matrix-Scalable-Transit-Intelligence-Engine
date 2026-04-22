@@ -1,0 +1,42 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<style>
+    .status-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85em; }
+    .status-booked { background-color: #dcfce7; color: #166534; }
+    .status-cancelled { background-color: #fee2e2; color: #991b1b; }
+</style>
+<div class="card fade-in">
+    <h2 style="margin-bottom: 1.5rem;">Your Bookings</h2>
+    {% if msg %}<h3>{{msg}}</h3>{% endif %}
+    <div style="overflow-x:auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>BOOKING ID</th><th>BUS NAME</th><th>SOURCE</th><th>DESTINATION</th><th>SEATS</th><th>PRICE</th><th>DATE</th><th>TIME</th><th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in book_list %}
+                <tr>
+                    <td>{{row.id}}</td><td>{{row.bus_name}}</td><td>{{row.source}}</td><td>{{row.dest}}</td><td>{{row.nos}}</td><td>₹{{row.price}}</td><td>{{row.date}}</td><td>{{row.time}}</td>
+                    <td><span class="status-badge {% if row.status == 'B' %}status-booked{% else %}status-cancelled{% endif %}">{{row.get_status_display}}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card fade-in" style="max-width: 500px;">
+    <h3 style="margin-bottom: 1rem;">Cancel Booking</h3>
+    {% if error %}<div class="alert alert-danger">{{error}}</div>{% endif %}
+    <form action="{% url 'cancellings' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="bus_id">Booking ID</label>
+            <input name='bus_id' class="form-control" type="number" id="bus_id" required>
+        </div>
+        <button type="submit" class="btn btn-danger mt-4">Cancel Booking</button>
+    </form>
+</div>
+{% endblock %}

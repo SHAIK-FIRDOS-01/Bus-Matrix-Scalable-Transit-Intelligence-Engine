@@ -1,0 +1,22 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="card fade-in" style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <h2 style="color: var(--brand-color); margin-bottom: 1rem;">Booking Confirmed!</h2>
+    <p class="text-muted" style="margin-bottom: 2rem;">Thank you for your reservation. Here are your bill details:</p>
+    
+    <div style="text-align: left; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
+        <p><strong>Passenger:</strong> {{book.name}}</p>
+        <p><strong>Bus Name:</strong> {{book.bus_name}}</p>
+        <p><strong>Route:</strong> {{book.source}} &rarr; {{book.dest}}</p>
+        <p><strong>Seats Booked:</strong> {{book.nos}}</p>
+        <p><strong>Cost per ticket:</strong> ₹{{book.price}}</p>
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+        <p style="font-size: 1.25rem; font-weight: bold;">Total Cost: ₹<span style="color: var(--brand-color);">{{cost}}</span></p>
+    </div>
+
+    <form action="{% url 'home' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success" style="width: 100%;">Return to Home</button>
+    </form>
+</div>
+{% endblock %}
