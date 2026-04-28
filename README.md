@@ -1,4 +1,4 @@
-# Bus Matrix Backend
+# Bus Matrix | Scalable Transit Intelligence Engine
 
 A professional, high-performance transit management system built with Django REST Framework and React. This system implements a "Grand Corridor" model to handle complex routing, real-time geographic telemetry, and multi-passenger bookings with dynamic segment pricing.
 
