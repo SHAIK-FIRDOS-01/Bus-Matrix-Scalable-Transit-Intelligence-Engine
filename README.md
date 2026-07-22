@@ -25,6 +25,20 @@ An architecturally resilient, production-ready system for solving complex transi
 - **Glassmorphic Dashboard**: Real-time fleet state updates with zero layout shift (CLS), powered by React and Tailwind CSS v4.
 - **Optimized Data Layer & Async Processing**: Advanced MySQL relational indexing enabling sub-200ms latency, coupled with **Redis** and **Celery** for robust background task queuing and caching.
 
+## 🏗️ System Architecture
+
+Below is the system architecture diagram illustrating the data flow and component interaction:
+
+![System Architecture](./architecture.png)
+
+The Bus Matrix platform employs a modern, decoupled architecture designed for high availability and low latency:
+- **Client Layer**: A responsive, glassmorphic frontend (React & Tailwind) that communicates with the backend via REST APIs.
+- **API Gateway & Core Logic**: Django REST Framework handles all incoming requests, orchestrating business rules, dynamic pricing, and specialized tour operations.
+- **Security & Authentication**: Comprehensive security utilizing JWT and OAuth to manage secure, scalable access control for all endpoints.
+- **Async Processing & Queuing**: **Celery** and **Redis** offload heavy tasks (such as live location streams, data aggregation, and notifications), ensuring the main thread remains non-blocking and highly performant.
+- **Data Persistence**: A robust **MySQL 8.0** database serves as the primary data store for complex relational structures including routes, schedules, users, tickets, and transactional logs.
+- **External Integrations**: Connects seamlessly with external geolocation and mapping services (OSRM, Geopy) for accurate routing and telemetry.
+
 ## 🛠️ Technology Stack
 
 - **Backend**: Django 6.0, Django REST Framework (DRF)
@@ -57,12 +71,6 @@ An architecturally resilient, production-ready system for solving complex transi
 1. `cd frontend`
 2. `npm install`
 3. `npm run dev`
-
-## 🏗️ System Architecture
-
-Below is the system architecture diagram:
-
-![System Architecture](./architecture.png)
 
 ---
 
