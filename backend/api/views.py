@@ -10,6 +10,8 @@ import datetime
 
 from .models import Bus, Book
 from .serializers import UserSerializer, BusSerializer, BookSerializer
+from .tasks import process_booking_notifications
+
 
 def calculate_segment_price(bus, source_name, dest_name):
     """Securely calculate price for a segment on the server side."""
@@ -181,3 +183,53 @@ def cancel_booking(request, pk):
         return Response({'error': 'Booking not found or unauthorized'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# --- Celery Async Notification Test View ---
+
+@api_view(['GET', 'POST'])
+@permission_classes([permissions.AllowAny])
+def test_notification(request):
+    """
+    Diagnostic endpoint to dispatch the Celery background notification task
+    (PDF rendering + SMS/Email dispatch simulation) without executing a checkout flow.
+    """
+    if request.method == 'POST':
+        booking_id = request.data.get('booking_id', 9999)
+        user_email = request.data.get('user_email', 'passenger@example.com')
+        phone_number = request.data.get('phone_number', '+919876543210')
+        source = request.data.get('source', 'Hyderabad')
+        dest = request.data.get('destination', 'Vijayawada')
+        fare = request.data.get('fare', 787.50)
+    else:
+        booking_id = request.GET.get('booking_id', 9999)
+        user_email = request.GET.get('user_email', 'passenger@example.com')
+        phone_number = request.GET.get('phone_number', '+919876543210')
+        source = request.GET.get('source', 'Hyderabad')
+        dest = request.GET.get('destination', 'Vijayawada')
+        fare = request.GET.get('fare', 787.50)
+
+    # Enqueue task asynchronously to the Redis broker
+    async_result = process_booking_notifications.delay(
+        booking_id=int(booking_id),
+        user_email=str(user_email),
+        phone_number=str(phone_number),
+        source=str(source),
+        dest=str(dest),
+        fare=float(fare)
+    )
+
+    return Response({
+        'status': 'QUEUED',
+        'message': 'Booking notification task successfully queued to Celery worker',
+        'task_id': async_result.id,
+        'payload': {
+            'booking_id': int(booking_id),
+            'user_email': user_email,
+            'phone_number': phone_number,
+            'source': source,
+            'destination': dest,
+            'fare': float(fare)
+        }
+    }, status=status.HTTP_202_ACCEPTED)
+

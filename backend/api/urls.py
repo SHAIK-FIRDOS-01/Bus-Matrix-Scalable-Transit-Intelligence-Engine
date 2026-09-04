@@ -11,9 +11,11 @@ urlpatterns = [
     
     # Buses
     path('buses/find/', views.find_bus, name='find_bus'),
+    path('buses/test-notification/', views.test_notification, name='test_notification'),
     
     # Bookings
     path('bookings/', views.list_bookings, name='list_bookings'),
     path('bookings/create/', views.create_booking, name='create_booking'),
     path('bookings/<int:pk>/cancel/', views.cancel_booking, name='cancel_booking'),
 ]
+
